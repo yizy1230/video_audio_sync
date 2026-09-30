@@ -1,0 +1,6 @@
+video_audio_sync
+Copyright 2026
+
+This operator's own code is Apache-2.0 (see LICENSE).
+
+ImageBind, Synchformer, SyncNet, and the vendored pytorchvideo checkout are third-party and keep their own licenses.

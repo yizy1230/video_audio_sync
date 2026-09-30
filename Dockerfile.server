@@ -1,0 +1,43 @@
+# video_audio_sync server (FastAPI)
+# Python 3.10 | GPU (PyTorch 2.1 + CUDA 11.8) — ImageBind + Synchformer + SyncNet
+#
+# Build (from algos/ root):
+#   docker build -f video_audio_sync/v1_0/Dockerfile.server -t algo-video_audio_sync-server:v1_0 .
+#
+# Run:
+#   docker run -d --gpus all --name server-video_audio_sync \
+#     -p 8000:8000 \
+#     algo-video_audio_sync-server:v1_0
+FROM pytorch/pytorch:2.1.0-cuda11.8-cudnn8-runtime
+
+WORKDIR /app
+
+# China mirrors: apt
+# China mirrors: pip
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ffmpeg libsndfile1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# av==9.0.0 via conda-forge (pip source build fails; av>=9.1.1 breaks Synchformer accuracy)
+RUN conda install -c conda-forge av==9.0.0 -y \
+    && conda clean -afy
+
+# Algo dependencies (torch/torchvision/torchaudio from base image; pytorchvideo installed after COPY)
+COPY requirements.txt /tmp/reqs.txt
+RUN grep -v -E '^(torch==|torchvision==|torchaudio==|--extra-index-url|pytorchvideo)' /tmp/reqs.txt > /tmp/reqs_filtered.txt \
+    && pip install --no-cache-dir -r /tmp/reqs_filtered.txt || true
+
+# Algo source (includes ImageBind/, Synchformer/, syncnet_python/, configs/)
+COPY . /app/algo
+WORKDIR /app/algo
+
+# pytorchvideo from vendored source
+RUN pip install --no-cache-dir --no-deps ./pytorchvideo-28fe037d212663c6a24f373b94cc5d478c8c1a1d || true
+
+ENV PYTHONPATH=/app:/app/algo
+ENV DEVICE=cuda
+
+EXPOSE 8000
+
+CMD ["python", "video_audio_sync_server.py", "--host", "0.0.0.0", "--port", "8000", "--device", "cuda"]

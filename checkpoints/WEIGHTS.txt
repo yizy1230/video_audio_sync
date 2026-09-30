@@ -1,0 +1,27 @@
+# Weights are not stored in this repository.
+# Download each file and place it at the path below.
+
+checkpoints/imagebind_huge.pth
+  ImageBind huge checkpoint.
+  https://dl.fbaipublicfiles.com/imagebind/imagebind_huge.pth
+
+checkpoints/syncnet_v2.model
+  SyncNet v2 lip-sync model.
+  https://www.robots.ox.ac.uk/~vgg/software/lipsync/data/syncnet_v2.model
+
+checkpoints/sfd_face.pth
+  S3FD face detector used by SyncNet.
+  https://www.robots.ox.ac.uk/~vgg/software/lipsync/data/sfd_face.pth
+  Also symlink it to syncnet_python/detectors/s3fd/weights/sfd_face.pth
+  (download_weights.sh does this).
+
+checkpoints/synchformer/24-01-04T16-39-21/cfg-24-01-04T16-39-21.yaml
+checkpoints/synchformer/24-01-04T16-39-21/24-01-04T16-39-21.pt
+  Synchformer offset checkpoint.
+  Base: https://a3s.fi/swift/v1/AUTH_a235c0f452d6488f830be462b58da78c/sync_models/24-01-04T16-39-21/
+
+Synchformer/model/modules/feat_extractors/visual/S3D_kinetics400_torchified.pt
+  S3D Kinetics-400 weights required by the vendored Synchformer code.
+  Obtain the file from https://github.com/v-iashin/Synchformer and place it at that path.
+
+Or run: bash download_weights.sh
